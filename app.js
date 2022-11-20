@@ -18,7 +18,7 @@ app.listen(port, function() {
 
 var jsonfile = require("jsonfile");
 var file = "miun-db.json";
-var courses = [];
+var jsonData = [];
 
 jsonfile.readFile(file, function(err, obj){
     if(err){
@@ -26,15 +26,24 @@ jsonfile.readFile(file, function(err, obj){
     }
     else{
 
-        courses = obj;
+        jsonData = obj;
     }
 });
 
-// Define a route handler for GET requests to the web root
+
 // Get all MIUN-courses
 app.get("/api/courses", function(req, res){
+    var courses = jsonData.courses;
+    var subject = null;
 
-    res.send(JSON.stringify(courses.courses, null, 2));
+    for(let i = 0; i < courses.length; i++){
+        var subjectCode = courses[i].subjectCode;
+        for(let i = 0; i < jsonData.subjects.length; i++){
+            if(subjectCode == jsonData.subjects[i].subjectCode){
+                subject = jsonData.subjects[i].subject;
+            }
+        }
+        courses[i].subject = subject;
+    }
+    res.send(courses);
 })
-
-
