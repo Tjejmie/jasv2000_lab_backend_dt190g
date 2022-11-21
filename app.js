@@ -30,7 +30,7 @@ jsonfile.readFile(file, function(err, obj){
     }
 });
 
-
+var courses = jsonData.courses;
 // Get all MIUN-courses
 app.get("/api/courses", function(req, res){
     var courses = jsonData.courses;
@@ -46,4 +46,25 @@ app.get("/api/courses", function(req, res){
         courses[i].subject = subject;
     }
     res.send(courses);
+})
+
+app.get("/api/courses/:courseCode", function(req, res){
+    var courseCode = req.params.courseCode.toUpperCase();
+    var courses = jsonData.courses;
+    var course = {};
+
+    for(let i=0; i<courses.length; i++){
+        if(courses[i].courseCode == courseCode){
+            var subjectCode = courses[i].subjectCode;
+            for(let i = 0; i < jsonData.subjects.length; i++){
+                if(subjectCode == jsonData.subjects[i].subjectCode){
+                    subject = jsonData.subjects[i].subject;
+                }
+            }
+            course = courses[i];
+            course.subject = subject;
+        }
+    }
+    res.send(course);
+
 })
