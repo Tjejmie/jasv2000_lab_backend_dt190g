@@ -31,6 +31,39 @@ jsonfile.readFile(file, function(err, obj){
 });
 
 var courses = jsonData.courses;
+
+// Get all my-courses
+app.get("/api/courses/my", function(req, res){
+    var myCourses = jsonData.myCourses;
+    var courses = jsonData.courses;
+    var subject = null;
+    var arrayWithMyCourses = [];
+
+    for(let i = 0; i < myCourses.length; i++){
+        var myCourse = myCourses[i].courseCode;
+        for(let i =0; i < courses.length; i++){
+            if(myCourse == courses[i].courseCode){
+                arrayWithMyCourses.push(courses[i])
+            }
+        }
+    }
+
+    for(let i = 0; i < arrayWithMyCourses.length; i++){
+        var subjectCode = arrayWithMyCourses[i].subjectCode;
+        var grade = myCourses[i].grade;
+   
+        for(let i = 0; i < jsonData.subjects.length; i++){
+            if(subjectCode == jsonData.subjects[i].subjectCode){
+                subject = jsonData.subjects[i].subject;
+            }
+        }
+        arrayWithMyCourses[i].subject = subject;
+        arrayWithMyCourses[i].grade = grade;
+    }
+    res.send(arrayWithMyCourses);
+
+})
+
 // Get all MIUN-courses
 app.get("/api/courses", function(req, res){
     var courses = jsonData.courses;
