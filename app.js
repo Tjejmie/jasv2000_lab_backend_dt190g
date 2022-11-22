@@ -30,7 +30,6 @@ jsonfile.readFile(file, function(err, obj){
     }
 });
 
-var courses = jsonData.courses;
 
 // Get all my-courses
 app.get("/api/courses/my", function(req, res){
@@ -60,27 +59,46 @@ app.get("/api/courses/my", function(req, res){
         arrayWithMyCourses[i].subject = subject;
         arrayWithMyCourses[i].grade = grade;
     }
-    res.send(arrayWithMyCourses);
+    res.status(200).json(arrayWithMyCourses);
 
 })
 
-// Get all MIUN-courses
-app.get("/api/courses", function(req, res){
+// Get specific my-courses
+app.get("/api/courses/my/:courseCode", function(req, res){
+    var myCourses = jsonData.myCourses;
     var courses = jsonData.courses;
     var subject = null;
+    var arrayWithMyCourses = [];
+    var course = {};
+    var courseCode = req.params.courseCode.toUpperCase();
 
-    for(let i = 0; i < courses.length; i++){
-        var subjectCode = courses[i].subjectCode;
-        for(let i = 0; i < jsonData.subjects.length; i++){
-            if(subjectCode == jsonData.subjects[i].subjectCode){
-                subject = jsonData.subjects[i].subject;
+    for(let i = 0; i < myCourses.length; i++){
+        var myCourse = myCourses[i].courseCode;
+        for(let i =0; i < courses.length; i++){
+            if(myCourse == courses[i].courseCode){
+                arrayWithMyCourses.push(courses[i])
             }
         }
-        courses[i].subject = subject;
     }
-    res.send(courses);
+
+    for(let i = 0; i < arrayWithMyCourses.length; i++){
+        if (arrayWithMyCourses[i].courseCode == courseCode){
+            var subjectCode = arrayWithMyCourses[i].subjectCode;
+            var grade = myCourses[i].grade;
+            for(let i = 0; i < jsonData.subjects.length; i++){
+                if(subjectCode == jsonData.subjects[i].subjectCode){
+                    subject = jsonData.subjects[i].subject;
+                }
+            }
+            arrayWithMyCourses[i].subject = subject;
+            arrayWithMyCourses[i].grade = grade;
+            course = arrayWithMyCourses[i];
+        }
+    }
+    res.status(200).json(course);
 })
 
+// Get specific MIUN-course
 app.get("/api/courses/:courseCode", function(req, res){
     var courseCode = req.params.courseCode.toUpperCase();
     var courses = jsonData.courses;
@@ -98,6 +116,28 @@ app.get("/api/courses/:courseCode", function(req, res){
             course.subject = subject;
         }
     }
-    res.send(course);
+    res.status(200).json(course);
 
 })
+
+
+// Get all MIUN-courses
+app.get("/api/courses", function(req, res){
+    var courses = jsonData.courses;
+    var subject = null;
+
+    for(let i = 0; i < courses.length; i++){
+        var subjectCode = courses[i].subjectCode;
+        for(let i = 0; i < jsonData.subjects.length; i++){
+            if(subjectCode == jsonData.subjects[i].subjectCode){
+                subject = jsonData.subjects[i].subject;
+            }
+        }
+        courses[i].subject = subject;
+    }
+    res.status(200).json(courses);
+})
+
+
+
+
