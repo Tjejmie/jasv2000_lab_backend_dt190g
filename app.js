@@ -30,7 +30,43 @@ jsonfile.readFile(file, function(err, obj){
     }
 });
 
+// Get all my-courses
+app.get("/api/courses/my", function(req, res){
+    var myCourses = jsonData.myCourses;
+    var courses = jsonData.courses;
+    var subject = null;
+    var arrayWithMyCourses = [];
 
+    for(let i = 0; i < myCourses.length; i++){
+        var myCourse = myCourses[i].courseCode;
+        for(let i =0; i < courses.length; i++){
+            if(myCourse == courses[i].courseCode){
+                arrayWithMyCourses.push(courses[i])
+            }
+        }
+    }
+
+    for(let i = 0; i < arrayWithMyCourses.length; i++){
+        var subjectCode = arrayWithMyCourses[i].subjectCode;
+        var grade = myCourses[i].grade;
+   
+        subject = subjectInfo(subjectCode);
+        arrayWithMyCourses[i].subject = subject;
+        arrayWithMyCourses[i].grade = grade;
+    }
+    res.status(200).json(arrayWithMyCourses);
+
+})
+
+// Get all MIUN-courses
+app.get("/api/courses", function(req, res){
+    var courses = jsonData.courses;
+    for(let i = 0; i < courses.length; i++){
+        var subjectCode = courses[i].subjectCode;
+        courses[i].subject = subjectInfo(subjectCode);
+    }
+    res.status(200).json(courses);
+})
 
 // Get specific MIUN-course
 app.get("/api/courses/:courseCode", function(req, res){
@@ -38,17 +74,34 @@ app.get("/api/courses/:courseCode", function(req, res){
     var courses = jsonData.courses;
     var course = {};
 
-    for(let i=0; i<courses.length; i++){
-        if(courses[i].courseCode == courseCode){
-            var subjectCode = courses[i].subjectCode;
-            subject = subjectInfo(subjectCode);
-            course = courses[i];
-            course.subject = subject;
-        }
-    }
+    course = courseInfo(courseCode);
     res.status(200).json(course);
 
 })
+
+// Get all subjects
+app.get("/api/subjects", function(req, res){
+    res.status(200).json(jsonData.subjects);
+})
+
+// Get specific subject
+app.get("/api/subjects/:subjectCode", function(req, res){
+    var subjects = jsonData.subjects;
+    var subject = {};
+    var subjectCode = req.params.subjectCode.toUpperCase();
+    for(let i=0; i < subjects.length; i++){
+        if(subjectCode == subjects[i].subjectCode){
+            subject = subjects[i];
+        }
+    }
+    res.status(200).json(subject);
+})
+
+// Get all grades
+app.get("/api/grades", function(req, res){
+    res.status(200).json(jsonData.grades);
+})
+
 // Get specific my-courses
 app.get("/api/courses/my/:courseCode", function(req, res){
     var myCourses = jsonData.myCourses;
@@ -79,110 +132,7 @@ app.get("/api/courses/my/:courseCode", function(req, res){
     }
     res.status(200).json(course);
 })
-// Get all my-courses
-app.get("/api/courses/my", function(req, res){
-    var myCourses = jsonData.myCourses;
-    var courses = jsonData.courses;
-    var subject = null;
-    var arrayWithMyCourses = [];
 
-    for(let i = 0; i < myCourses.length; i++){
-        var myCourse = myCourses[i].courseCode;
-        for(let i =0; i < courses.length; i++){
-            if(myCourse == courses[i].courseCode){
-                arrayWithMyCourses.push(courses[i])
-            }
-        }
-    }
-
-    for(let i = 0; i < arrayWithMyCourses.length; i++){
-        var subjectCode = arrayWithMyCourses[i].subjectCode;
-        var grade = myCourses[i].grade;
-   
-        subject = subjectInfo(subjectCode);
-        arrayWithMyCourses[i].subject = subject;
-        arrayWithMyCourses[i].grade = grade;
-    }
-    res.status(200).json(arrayWithMyCourses);
-
-})
-
-
-
-
-// Delete a course from my-course
-app.delete("/api/courses/my/:courseCode", function(req, res){
-
-    var myCourses = jsonData.myCourses;
-    var courses = jsonData.courses;
-    var subject = null;
-    var arrayWithMyCourses = [];
-    var course = {};
-
-    var deleteCourseCode = req.params.courseCode.toUpperCase();
-    const index = myCourses.findIndex((myCourses => myCourses.courseCode == deleteCourseCode));
-   
-    if (index != -1){
-        for(let i =0; i < courses.length; i++){
-            if(deleteCourseCode == courses[i].courseCode){
-                arrayWithMyCourses.push(courses[i])
-            }
-        }
-
-        for(let i = 0; i < arrayWithMyCourses.length; i++){
-            var subjectCode = arrayWithMyCourses[i].subjectCode;
-            var grade = myCourses[i].grade;
-            subject = subjectInfo(subjectCode);
-            arrayWithMyCourses[i].subject = subject;
-            arrayWithMyCourses[i].grade = grade;
-            course = arrayWithMyCourses[i];
-        }
-        myCourses.splice(index, 1);
-        saveFile();
-        res.status(200).json(course);
-    }
-            
-    else{
-        res.status(404).json({error: 'Course does not exist in myCourses'})
-    }
-})
-
-
-
-
-// Get all MIUN-courses
-app.get("/api/courses", function(req, res){
-    var courses = jsonData.courses;
-    for(let i = 0; i < courses.length; i++){
-        var subjectCode = courses[i].subjectCode;
-        courses[i].subject = subjectInfo(subjectCode);
-    }
-    res.status(200).json(courses);
-})
-
-
-// Get all subjects
-app.get("/api/subjects", function(req, res){
-    res.status(200).json(jsonData.subjects);
-})
-
-// Get specific subject
-app.get("/api/subjects/:subjectCode", function(req, res){
-    var subjects = jsonData.subjects;
-    var subject = {};
-    var subjectCode = req.params.subjectCode.toUpperCase();
-    for(let i=0; i < subjects.length; i++){
-        if(subjectCode == subjects[i].subjectCode){
-            subject = subjects[i];
-        }
-    }
-    res.status(200).json(subject);
-})
-
-// Get all grades
-app.get("/api/grades", function(req, res){
-    res.status(200).json(jsonData.grades);
-})
 
 // Add new my-course
 app.post('/api/courses/my', function(req, res) {
@@ -237,6 +187,42 @@ app.put('/api/courses/my/:courseCode', function(req, res) {
     res.status(404).send({"error": "Course does not exist"});    
 });
 
+// Delete a course from my-course
+app.delete("/api/courses/my/:courseCode", function(req, res){
+
+    var myCourses = jsonData.myCourses;
+    var courses = jsonData.courses;
+    var subject = null;
+    var arrayWithMyCourses = [];
+    var course = {};
+
+    var deleteCourseCode = req.params.courseCode.toUpperCase();
+    const index = myCourses.findIndex((myCourses => myCourses.courseCode == deleteCourseCode));
+   
+    if (index != -1){
+        for(let i =0; i < courses.length; i++){
+            if(deleteCourseCode == courses[i].courseCode){
+                arrayWithMyCourses.push(courses[i])
+            }
+        }
+
+        for(let i = 0; i < arrayWithMyCourses.length; i++){
+            var subjectCode = arrayWithMyCourses[i].subjectCode;
+            var grade = myCourses[i].grade;
+            subject = subjectInfo(subjectCode);
+            arrayWithMyCourses[i].subject = subject;
+            arrayWithMyCourses[i].grade = grade;
+            course = arrayWithMyCourses[i];
+        }
+        myCourses.splice(index, 1);
+        saveFile();
+        res.status(200).json(course);
+    }
+            
+    else{
+        res.status(404).json({error: 'Course does not exist in myCourses'})
+    }
+})
 
 function courseInfo(courseCode){
     var courses = jsonData.courses;
