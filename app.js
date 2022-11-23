@@ -31,6 +31,7 @@ jsonfile.readFile(file, function(err, obj){
 });
 
 
+
 // Get all my-courses
 app.get("/api/courses/my", function(req, res){
     var myCourses = jsonData.myCourses;
@@ -62,6 +63,7 @@ app.get("/api/courses/my", function(req, res){
     res.status(200).json(arrayWithMyCourses);
 
 })
+
 
 // Get specific my-courses
 app.get("/api/courses/my/:courseCode", function(req, res){
@@ -98,21 +100,26 @@ app.get("/api/courses/my/:courseCode", function(req, res){
     res.status(200).json(course);
 })
 
-// Add new my-course
-app.post('/api/courses/my', function(req, res){
 
+// Update my-course
+app.put('/api/courses/my/:courseCode', function(req, res) {
+    var courseCode = req.params.courseCode;
+    var newGrade = req.body.grade;
+    var myCourses = dbObject.myCourses;
 
-    var myCourses = jsonData.myCourses;
+    for (let i = 0; i < myCourses.length; i++) {
+        if (courseCode == myCourses[i].courseCode) {
+            var course = getCourseInfo(courseCode);
+            course.subject = getSubject(course.subjectCode);
+            myCourses[i].grade = newGrade;
+            course.grade = newGrade; 
+            saveFile();
+            res.status(200).send(course);
+        };       
+    }
+    res.status(404).send({"error": "Kursen finns inte i dina kurser"});    
+});
 
-    var newCourse = {
-        courseCode: req.body.courseCode,
-        grade: req.body.grade
-    };
-    
-    myCourses.push(newCourse);
-    res.status(201).json("asd");
-    
-})
 
 
 // Delete a course from my-course
@@ -154,7 +161,6 @@ app.delete("/api/courses/my/:courseCode", function(req, res){
         res.status(404).json({error: 'Course does not exist in myCourses'})
     }
 })
-
 
 
 
@@ -226,5 +232,16 @@ app.get("/api/grades", function(req, res){
     res.status(200).json(jsonData.grades);
 })
 
+// Add new my-course
+app.post('/api/courses/my', function(req, res) {
+
+    var newCourse = {
+        courseCode: req.body.courseCode,
+        grade: req.body.grade
+    };
+    
+    myCourses.push(newCourse);
+    res.status(201).json(newCourse);
+});
 
 
