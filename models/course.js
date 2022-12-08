@@ -9,12 +9,25 @@ const coursesSchema = new mongoose.Schema({
     name: { type: String, required: true},
     points: { type: Number, required: true},
     institutionCode: { type: String, required: true},
-    subject: { type: String, required: true}
+    subject: { type: String, required: true},
+    
+
 });
 
 
-coursesSchema.statics.getAllUsers = function () {
-    return this.find({}); // find all documents
+// Get all courses
+coursesSchema.statics.getAllCourses = function () {
+    return this.find({});
 };
 
+
+
+// Get specific course
+coursesSchema.statics.getCourse = function (courseCode) {
+    return this.findOne({courseCode : courseCode});
+};
+
+
+
 module.exports = mongoose.model('Course', coursesSchema);
+

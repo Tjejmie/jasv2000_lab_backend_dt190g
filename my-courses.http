@@ -41,7 +41,7 @@ GET {{url}}/courses/my
 // Expected HTTP response status code: 200
 // Expected response: a my course object (json) with status and all data from corresponding miun course
 // {"courseCode": "DT190G", "grade": "-", "subjectCode": "DTA","level": "GR","progression": "B","name": "Javascriptbaserad webbutveckling","points": 7.5,"institutionCode": "DSV","subject": "Datateknik"}
-GET {{url}}/courses/my/DT190G
+GET {{url}}/courses/my/IK006G
 
 ###############################################
 

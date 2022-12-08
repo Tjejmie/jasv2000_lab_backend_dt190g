@@ -3,6 +3,7 @@ const express = require('express');
 const cors = require('cors');
 const mongoose = require('mongoose');
 const courseRoutes = require('./routes/courses');
+//const myCourseRoutes = require('./routes/myCourses');
 
 require('dotenv').config();
 /** URI to the db server (defined in .env) */
@@ -68,6 +69,7 @@ app.use(express.urlencoded({ extended: true }));
 
 // Connect all our users routes to the root of the app
 app.use('/', courseRoutes);
+
 
 
 // Start the server
