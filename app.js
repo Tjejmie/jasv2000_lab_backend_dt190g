@@ -3,6 +3,8 @@ const express = require('express');
 const cors = require('cors');
 const mongoose = require('mongoose');
 const courseRoutes = require('./routes/courses');
+const subjectRoutes = require('./routes/subjects');
+const gradeRoutes = require('./routes/grades');
 //const myCourseRoutes = require('./routes/myCourses');
 
 require('dotenv').config();
@@ -67,9 +69,10 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 
-// Connect all our users routes to the root of the app
+// Connect all routes to the root of the app
 app.use('/', courseRoutes);
-
+app.use('/', subjectRoutes);
+app.use('/', gradeRoutes);
 
 
 // Start the server
