@@ -16,7 +16,6 @@ subjectSchema.statics.getAllSubjects = function () {
 };
 
 
-
 // Get specific subject
 subjectSchema.statics.getSubject = function (subjectCode) {
     return this.findOne({subjectCode : subjectCode});

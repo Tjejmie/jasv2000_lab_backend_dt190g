@@ -3,7 +3,6 @@ const Course = require('../models/course');
 const MyCourse = require('../models/myCourse');
 
 // Get all my-courses
-
 routes.get("/api/courses/my", async (req, res) => {
 
     const myCoursesAggregate = await Course.aggregate([
@@ -20,6 +19,7 @@ routes.get("/api/courses/my", async (req, res) => {
     res.status(200).json(myCoursesAggregate);
 })
 
+// Get specific my-course
 routes.get("/api/courses/my/:courseCode", async (req, res) => {
     const courseCode = req.params.courseCode.toUpperCase();
     myCourseAggregate = await Course.aggregate([

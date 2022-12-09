@@ -6,6 +6,7 @@ const myCoursesSchema = new mongoose.Schema({
     grade : { type: String, required: true}
 
 },
+//Mongoose by default produces a collection name by passing the model name to the utils.toCollectionName method
 {collection: 'myCourses'});
 
 // Get specific course
@@ -19,14 +20,16 @@ myCoursesSchema.statics.getAllMyCourses = function () {
     return this.find({});
 };
 
+// Update my-course
 myCoursesSchema.statics.updateMyCourse = function (courseCode, grade) {
     return this
-        .findOneAndUpdate({courseCode : courseCode}, grade); // finds a matching document and updates it
+        .findOneAndUpdate({courseCode : courseCode}, grade);
 };
 
+// delete a my-course
 myCoursesSchema.statics.deleteMyCourse = function (courseCode) {
     return this
-        .findOneAndRemove({courseCode : courseCode}); // finds a matching document and updates it
+        .findOneAndRemove({courseCode : courseCode});
 };
 
 module.exports = mongoose.model('MyCourse', myCoursesSchema);

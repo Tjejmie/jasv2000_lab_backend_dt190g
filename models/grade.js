@@ -9,13 +9,10 @@ var gradeSchema = new mongoose.Schema({
 });
 
 
-// // Get all grades
+// Get all grades with name 'fa'
 gradeSchema.statics.getAllGrades = function () {
     return this.find({name: 'fa'});
 };
 
-// const grades = await Grades.find({ name : 'fa'}, {'grades' : 1, '_id': 0})
-	
-// 	res.json(grades[0].grades)
 
 module.exports = mongoose.model('Grade', gradeSchema);
